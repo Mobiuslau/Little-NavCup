@@ -9,7 +9,7 @@ import csv
 
 
 def main(args):
-    """First it is checked wether the supplied file exists. Then the file is read.
+    """First it is checked whether the supplied file exists. Then the file is read.
     Before it is closed, it is parsed and written to a new csv file.
     """
     for cup_file in args.cupfiles:
