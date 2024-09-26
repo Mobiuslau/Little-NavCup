@@ -2,7 +2,7 @@
 
 # Little-NavCup: Import CUP Userpoints
 
-Convert the SeeYou CUP format to a CSV format readable by Little Navmap using Python used to import userpoints.
+Convert the SeeYou CUP format to a CSV format readable by Little Navmap, which is used to import userpoints, with Python.
 
 - [SeeYou CUP format documentation](https://downloads.naviter.com/docs/SeeYou_CUP_file_format.pdf)
 - [Little Navmap CSV documentation](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/USERPOINT.html#csv-data-format)
@@ -10,7 +10,7 @@ Convert the SeeYou CUP format to a CSV format readable by Little Navmap using Py
 ## Installation:
 
 1. Install [python 3](https://www.python.org/downloads/).
-2. Download the repository using the creen `code` button.
+2. Download the repository using the green `code` button.
 
 ## Usage:
 
