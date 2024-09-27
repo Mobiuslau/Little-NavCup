@@ -25,7 +25,7 @@ def main(args):
 
             with open(new_extension(cup_file_abspath, 'csv'), 'w', newline='') as file_csv:
                 log.info(f'Writing to file: \"{new_extension(cup_file_abspath, "csv")}\"')
-                writer = csv.DictWriter(file_csv, fieldnames=create_lmn_field_keys())
+                writer = csv.DictWriter(file_csv, fieldnames=create_lnm_field_keys())
                 writer.writeheader()
 
                 for cup_row in reader:
@@ -38,7 +38,7 @@ def main(args):
                             log.critical(e.args)
                             log.critical('First row is not a fieldname header.')
                             exit()
-                        writer.writerow(create_lmn_user_point(cup_userpoint))
+                        writer.writerow(create_lnm_user_point(cup_userpoint))
     log.info('Task completed.')
 
 
@@ -50,7 +50,7 @@ def is_header(cup_row):
     return 'lat' in cup_row
 
 
-def create_lmn_field_keys():
+def create_lnm_field_keys():
     """return: List of LNM fieldnames.
     """
     return [
@@ -68,7 +68,7 @@ def create_lmn_field_keys():
     ]
 
 
-def create_lmn_user_point(cup_userpoint):
+def create_lnm_user_point(cup_userpoint):
     """return: Dictionary with single userpoint data as per the LNM fieldnames.
     """
     values = [
@@ -84,7 +84,7 @@ def create_lmn_user_point(cup_userpoint):
         get_region(cup_userpoint),
         get_visible_from(cup_userpoint)
     ]
-    return {field_keys: values for field_keys, values in zip(create_lmn_field_keys(), values)}
+    return {field_keys: values for field_keys, values in zip(create_lnm_field_keys(), values)}
 
 
 def get_type(cup_userpoint):
@@ -186,7 +186,7 @@ def get_visible_from(cup_userpoint):
 
 
 def cup_style_mapping():
-    """Maps the CUP-format styles to LMN-compatible types.
+    """Maps the CUP-format styles to LNM-compatible types.
     See SeeYou & Little Navmap documentations.
     return: Dictionary of mapping.
     """
