@@ -16,25 +16,38 @@ def main(args):
         cup_file_abspath = os.path.abspath(cup_file)
 
         if not os.path.isfile(cup_file_abspath):
-            log.error('File does not exist.')
+            log.critical('File does not exist.')
             exit()
 
         with open(cup_file_abspath, 'r', newline='') as file_cup:
             log.info(f'Reading file   : \"{cup_file_abspath}\"')
-            reader = csv.DictReader(file_cup)
+            reader = csv.reader(file_cup)
 
             with open(new_extension(cup_file_abspath, 'csv'), 'w', newline='') as file_csv:
                 log.info(f'Writing to file: \"{new_extension(cup_file_abspath, "csv")}\"')
                 writer = csv.DictWriter(file_csv, fieldnames=create_lmn_field_keys())
                 writer.writeheader()
 
-                for cup_userpoint in reader:
-                    writer.writerow(create_lmn_user_point(cup_userpoint))
+                for cup_row in reader:
+                    if is_header(cup_row):
+                        header = cup_row
+                    else:
+                        try:
+                            cup_userpoint = {key: value for key, value in zip(header, cup_row)}
+                        except UnboundLocalError as e:
+                            log.critical(e.args)
+                            log.critical('First row is not a fieldname header.')
+                            exit()
+                        writer.writerow(create_lmn_user_point(cup_userpoint))
     log.info('Task completed.')
 
 
 def new_extension(path, ext):
     return os.path.abspath(f'{path}.{ext}')
+
+
+def is_header(cup_row):
+    return 'lat' in cup_row
 
 
 def create_lmn_field_keys():
