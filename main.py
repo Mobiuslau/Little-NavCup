@@ -25,11 +25,11 @@ def main(args):
 
             with open(new_extension(cup_file_abspath, 'csv'), 'w', newline='') as file_csv:
                 log.info(f'Writing to file: \"{new_extension(cup_file_abspath, "csv")}\"')
-                writer = csv.DictWriter(file_csv, fieldnames=get_field_keys())
+                writer = csv.DictWriter(file_csv, fieldnames=create_lmn_field_keys())
                 writer.writeheader()
 
-                for cup_row in reader:
-                    writer.writerow(create_user_point(cup_row))
+                for cup_userpoint in reader:
+                    writer.writerow(create_lmn_user_point(cup_userpoint))
     log.info('Task completed.')
 
 
@@ -37,7 +37,7 @@ def new_extension(path, ext):
     return os.path.abspath(f'{path}.{ext}')
 
 
-def get_field_keys():
+def create_lmn_field_keys():
     """return: List of LNM fieldnames.
     """
     return [
@@ -55,117 +55,117 @@ def get_field_keys():
     ]
 
 
-def create_user_point(cup_row):
+def create_lmn_user_point(cup_userpoint):
     """return: Dictionary with single userpoint data as per the LNM fieldnames.
     """
     values = [
-        get_type(cup_row),
-        get_name(cup_row),
-        get_ident(cup_row),
-        get_latitude(cup_row),
-        get_longitude(cup_row),
-        get_elevation(cup_row),
-        get_magnetic_declination(cup_row),
-        get_tags(cup_row),
-        get_description(cup_row),
-        get_region(cup_row),
-        get_visible_from(cup_row)
+        get_type(cup_userpoint),
+        get_name(cup_userpoint),
+        get_ident(cup_userpoint),
+        get_latitude(cup_userpoint),
+        get_longitude(cup_userpoint),
+        get_elevation(cup_userpoint),
+        get_magnetic_declination(cup_userpoint),
+        get_tags(cup_userpoint),
+        get_description(cup_userpoint),
+        get_region(cup_userpoint),
+        get_visible_from(cup_userpoint)
     ]
-    return {field_keys: values for field_keys, values in zip(get_field_keys(), values)}
+    return {field_keys: values for field_keys, values in zip(create_lmn_field_keys(), values)}
 
 
-def get_type(cup_row):
+def get_type(cup_userpoint):
     """Use CUP-style to LNM-type mapping with `Unknown` as fallback.
     return: String of LNM-compatible type.
     """
     types = list(cup_style_mapping().values())
-    return types[int(cup_row.get('style', '0'))]
+    return types[int(cup_userpoint.get('style', '0'))]
 
 
-def get_name(cup_row):
+def get_name(cup_userpoint):
     """return: String with userpoint name if applicable else None.
     """
-    return cup_row.get('name', None)
+    return cup_userpoint.get('name', None)
 
 
-def get_ident(cup_row):
+def get_ident(cup_userpoint):
     """return: String with userpoint code if applicable else None.
     """
-    return cup_row.get('code', None)
+    return cup_userpoint.get('code', None)
 
 
-def get_latitude(cup_row):
+def get_latitude(cup_userpoint):
     """SeeYou Cup format is [deg0, deg1, min0, min1, ., mdl0, mdl1, mdl2, N/S].
     return: float of latitude in decimal format.
     """
-    degrees     = int(cup_row["lat"][:2])
-    minutes     = float(cup_row["lat"][2:-1])
-    north_south = {"N": 1, "S": -1}[cup_row["lat"][-1].upper()]
+    degrees     = int(cup_userpoint["lat"][:2])
+    minutes     = float(cup_userpoint["lat"][2:-1])
+    north_south = {"N": 1, "S": -1}[cup_userpoint["lat"][-1].upper()]
     return north_south * (degrees + minutes / 60)
 
 
-def get_longitude(cup_row):
+def get_longitude(cup_userpoint):
     """SeeYou Cup format is [deg0, deg1, deg2, min0, min1, ., mdl0, mdl1, mdl2, E/W].
     return: float of longitude in decimal format.
     """
-    degrees   = int(cup_row["lon"][:3])
-    minutes   = float(cup_row["lon"][3:-1])
-    east_west = {"E": 1, "W": -1}[cup_row["lon"][-1].upper()]
+    degrees   = int(cup_userpoint["lon"][:3])
+    minutes   = float(cup_userpoint["lon"][3:-1])
+    east_west = {"E": 1, "W": -1}[cup_userpoint["lon"][-1].upper()]
     return east_west * (degrees + minutes / 60)
 
 
-def get_elevation(cup_row):
+def get_elevation(cup_userpoint):
     """return: String of elevation with m or f as suffix for meters or feet if applicable else None.
     """
-    if cup_row.get('elev', None):
-        return cup_row["elev"].replace('ft', 'f')
+    if cup_userpoint.get('elev', None):
+        return cup_userpoint["elev"].replace('ft', 'f')
     else:
         return None
 
 
-def get_magnetic_declination(cup_row):
+def get_magnetic_declination(cup_userpoint):
     """Not in CUP format.
     return: None.
     """
     return None
 
 
-def get_tags(cup_row):
+def get_tags(cup_userpoint):
     """No use.
     return: None.
     """
     return None
 
 
-def get_description(cup_row):
+def get_description(cup_userpoint):
     """Create description containing data from fields in the CUP format otherwise not supported by LNM.
     return: String of extra information not specified in other fields.
     """
     styles = list(cup_style_mapping().keys())
     desc   = ''
-    if cup_row.get('desc', None):
-        desc += cup_row["desc"]
-    if cup_row.get('style', None):
-        desc += f' | {styles[int(cup_row["style"])]}'
-    if cup_row.get('rwdir', None):
-        desc += f' | rwdir: {cup_row["rwdir"]}'
-    if cup_row.get('rwlen', None):
-        desc += f' | rwlen: {cup_row["rwlen"]}'
-    if cup_row.get('freq', None):
-        desc += f' | freq: {cup_row["freq"]}'
-    if cup_row.get('userdata', None):
-        desc += f' | userdata: {cup_row["userdata"]}'
+    if cup_userpoint.get('desc', None):
+        desc += cup_userpoint["desc"]
+    if cup_userpoint.get('style', None):
+        desc += f' | {styles[int(cup_userpoint["style"])]}'
+    if cup_userpoint.get('rwdir', None):
+        desc += f' | rwdir: {cup_userpoint["rwdir"]}'
+    if cup_userpoint.get('rwlen', None):
+        desc += f' | rwlen: {cup_userpoint["rwlen"]}'
+    if cup_userpoint.get('freq', None):
+        desc += f' | freq: {cup_userpoint["freq"]}'
+    if cup_userpoint.get('userdata', None):
+        desc += f' | userdata: {cup_userpoint["userdata"]}'
     return desc
 
 
-def get_region(cup_row):
+def get_region(cup_userpoint):
     """Not implemented.
     return: None.
     """
     return None
 
 
-def get_visible_from(cup_row):
+def get_visible_from(cup_userpoint):
     """Not in CUP format.
     return: None.
     """
