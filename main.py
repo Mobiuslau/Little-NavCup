@@ -19,11 +19,11 @@ def main(args):
             log.critical('File does not exist.')
             exit()
 
-        with open(cup_file_abspath, 'r', newline='') as file_cup:
+        with open(cup_file_abspath, 'r', newline='', encoding='utf-8') as file_cup:
             log.info(f'Reading file   : \"{cup_file_abspath}\"')
             reader = csv.reader(file_cup)
 
-            with open(new_extension(cup_file_abspath, 'csv'), 'w', newline='') as file_csv:
+            with open(new_extension(cup_file_abspath, 'csv'), 'w', newline='', encoding='utf-8') as file_csv:
                 log.info(f'Writing to file: \"{new_extension(cup_file_abspath, "csv")}\"')
                 writer = csv.DictWriter(file_csv, fieldnames=create_lnm_field_keys())
                 writer.writeheader()
