@@ -29,9 +29,12 @@ def main(args):
                 writer.writeheader()
 
                 for cup_row in reader:
+                    log.debug(cup_row)
                     if is_header(cup_row):
                         header = cup_row
                     elif is_version_specifier(cup_row):
+                        continue
+                    elif is_empty_line(cup_row):
                         continue
                     else:
                         try:
@@ -50,6 +53,10 @@ def new_extension(path, ext):
 
 def is_header(cup_row):
     return 'lat' in cup_row
+
+
+def is_empty_line(cup_row):
+    return not cup_row
 
 
 def is_version_specifier(cup_row):
@@ -232,7 +239,7 @@ def get_clas(arg=None):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s]: %(message)s')
+    logging.basicConfig(level=logging.INFO, format='[%(levelname)s]: %(message)s')
     log = logging.getLogger(__name__)
     try:
         args = get_clas()
