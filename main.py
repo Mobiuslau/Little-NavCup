@@ -31,6 +31,8 @@ def main(args):
                 for cup_row in reader:
                     if is_header(cup_row):
                         header = cup_row
+                    elif is_version_specifier(cup_row):
+                        continue
                     else:
                         try:
                             cup_userpoint = {key: value for key, value in zip(header, cup_row)}
@@ -48,6 +50,10 @@ def new_extension(path, ext):
 
 def is_header(cup_row):
     return 'lat' in cup_row
+
+
+def is_version_specifier(cup_row):
+    return 'version=' in cup_row
 
 
 def create_lnm_field_keys():
